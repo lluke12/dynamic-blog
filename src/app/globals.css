@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.prose {
+  max-width: none;
+  color: inherit;
+}
+
+.prose a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  color: inherit;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
