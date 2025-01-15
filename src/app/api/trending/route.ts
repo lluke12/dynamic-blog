@@ -2,22 +2,40 @@ import { NextResponse } from 'next/server';
 import googleTrends from 'google-trends-api';
 import { supabase } from '@/lib/supabase';
 
+interface TrendingSearchResult {
+  title: {
+    query: string;
+  };
+  formattedTraffic: string;
+  articles?: Array<{
+    snippet?: string;
+  }>;
+}
+
+interface GoogleTrendsResponse {
+  default: {
+    trendingSearchesDays: Array<{
+      trendingSearches: TrendingSearchResult[];
+    }>;
+  };
+}
+
 export async function GET() {
   try {
     const results = await googleTrends.dailyTrends({
       geo: 'NL',
     });
     
-    const data = JSON.parse(results);
+    const data = JSON.parse(results) as GoogleTrendsResponse;
     const topics = data.default.trendingSearchesDays[0].trendingSearches
-      .filter((topic: any) => {
+      .filter((topic: TrendingSearchResult) => {
         const keywords = ['web', 'development', 'programming', 'code', 'software'];
         return keywords.some(keyword => 
           topic.title.query.toLowerCase().includes(keyword)
         );
       })
       .slice(0, 5)
-      .map((topic: any) => ({
+      .map((topic: TrendingSearchResult) => ({
         keyword: topic.title.query,
         search_volume: parseInt(topic.formattedTraffic.replace('K+', '000').replace('M+', '000000')) || 1000,
       }));
